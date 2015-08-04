@@ -1,9 +1,7 @@
-package name.qd.simpleConnect.test.client;
-import name.qd.simpleConnect.client.Client;
+package name.qd.simpleConnect.client;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-
 
 public class TestClient {
 	

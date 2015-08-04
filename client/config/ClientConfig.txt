@@ -1,0 +1,9 @@
+Log4jConfigPath=./config/log4j.properties
+
+ServerIp=127.0.0.1
+ServerPort=9876
+Heartbeat-Interval=10000
+Heartbeat-Count=3
+
+SendingQueue-Size=5000
+ReceivingQueue-Size=5000

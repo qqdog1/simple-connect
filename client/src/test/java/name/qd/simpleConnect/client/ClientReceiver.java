@@ -1,8 +1,8 @@
-package name.qd.simpleConnect.test.client;
-
-import org.apache.log4j.Logger;
+package name.qd.simpleConnect.client;
 
 import name.qd.simpleConnect.common.receiver.SimpleConnectReceiver;
+
+import org.apache.log4j.Logger;
 
 public class ClientReceiver implements SimpleConnectReceiver {
 

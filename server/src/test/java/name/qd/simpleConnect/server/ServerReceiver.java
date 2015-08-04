@@ -1,4 +1,4 @@
-package name.qd.simpleConnect.test.server;
+package name.qd.simpleConnect.server;
 
 import name.qd.simpleConnect.common.receiver.SimpleConnectReceiver;
 
