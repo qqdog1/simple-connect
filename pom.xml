@@ -5,12 +5,12 @@
 	<artifactId>SimpleConnect</artifactId>
 	<packaging>pom</packaging>
 	<version>1.0</version>
-	
+
 	<modules>
-        <module>server</module>
-        <module>common</module>
-        <module>client</module>
-    </modules>
+		<module>server</module>
+		<module>common</module>
+		<module>client</module>
+	</modules>
 
 	<dependencies>
 		<dependency>
@@ -26,4 +26,39 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<outputDirectory>${basedir}/target/lib</outputDirectory>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>execution1</id>
+						<phase>install</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<resources>
+			<resource>
+				<directory>config</directory>
+				<targetPath>${basedir}/target/config</targetPath>
+				<includes>
+					<include>*</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
 </project>
