@@ -5,7 +5,7 @@ import org.apache.log4j.PropertyConfigurator;
 
 public class TestClient {
 	
-	private static final int TOTAL_COUNT = 10000;
+	private static final int TOTAL_COUNT = 1;
 	private Logger mLogger;
 	
 	private byte[] bData = "abc".getBytes();
