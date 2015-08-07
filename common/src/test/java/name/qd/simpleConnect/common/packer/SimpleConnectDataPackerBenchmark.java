@@ -29,14 +29,13 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 @State(Scope.Benchmark)
 public class SimpleConnectDataPackerBenchmark {
 
-	private static final int WARMUP_COUNT = 5;
-	private static final int MEANSURE_COUNT = 5;
+	private static final int INPUT_STREAM_INIT_SIZE = 10;
 
 	public static void main(String[] s) throws RunnerException {
 		Options opt = new OptionsBuilder()
 				.include(SimpleConnectDataPackerBenchmark.class.getSimpleName())
-				.warmupIterations(WARMUP_COUNT)
-				.measurementIterations(MEANSURE_COUNT)
+				.warmupIterations(5)
+				.measurementIterations(5)
 //				.threads(4)
 				.timeUnit(TimeUnit.MICROSECONDS)
 //				.mode(Mode.AverageTime)
@@ -61,7 +60,7 @@ public class SimpleConnectDataPackerBenchmark {
 			File file = new File("PackVoByte");
 			FileOutputStream fOut = new FileOutputStream(file);
 			file.createNewFile();
-			for (int i = 0; i < MEANSURE_COUNT + WARMUP_COUNT; i++) {
+			for (int i = 0; i < INPUT_STREAM_INIT_SIZE; i++) {
 				fOut.write(SimpleConnectDataPacker.packingDataUseByteBuffer(vo));
 				fOut.flush();
 			}
