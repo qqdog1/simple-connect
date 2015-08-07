@@ -3,7 +3,6 @@ package name.qd.simpleConnect.common.enumeration;
 import java.util.Arrays;
 
 public enum REJ_CodeEnum {
-	// 同IP連線數超過
 	SAME_IP_FULL("1".getBytes()),
 	;
 	

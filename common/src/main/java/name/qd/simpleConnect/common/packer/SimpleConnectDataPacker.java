@@ -46,8 +46,8 @@ public class SimpleConnectDataPacker {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(iTotalLength);
 		byteBuffer.put(PackerConstant.BOU);
 		byteBuffer.put(PackerConstant.BOU);
-		byteBuffer.put((byte)(PackerConstant.OP_LENGTH + vo.getData().length / PackerConstant.POSITIVE_BYTE_SIZE));
-		byteBuffer.put((byte)(PackerConstant.OP_LENGTH + vo.getData().length % PackerConstant.POSITIVE_BYTE_SIZE));
+		byteBuffer.put((byte)((PackerConstant.OP_LENGTH + vo.getData().length) / PackerConstant.POSITIVE_BYTE_SIZE));
+		byteBuffer.put((byte)((PackerConstant.OP_LENGTH + vo.getData().length) % PackerConstant.POSITIVE_BYTE_SIZE));
 		byteBuffer.put(vo.getOP_CodeEnum().getByteArray());
 		byteBuffer.put(vo.getData());
 		byteBuffer.put(PackerConstant.EOU);
