@@ -11,7 +11,6 @@ public class ClientSocketThreadManager {
 	
 	private Logger mLogger = Logger.getLogger(LogConstant.SERVER_LOG);
 	
-//	Collections.synchronizedMap
 	private Map<String, ClientSocketThread> map = new Hashtable<String, ClientSocketThread>();
 
 	private static ClientSocketThreadManager instance = new ClientSocketThreadManager();

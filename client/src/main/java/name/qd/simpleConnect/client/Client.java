@@ -108,7 +108,7 @@ public class Client extends Thread {
 			} catch (IllegalStateException e) {
 				mLogger.error("Receiving Queue Full.", e);
 			} catch (IOException e) {
-				// TODO �i���٭n�� receiver ��AP���@�U�_�F
+				// TODO notify ap
 				mLogger.error(e);
 				bRunFlag = false;
 				disconnect();
@@ -149,14 +149,14 @@ public class Client extends Thread {
 		
 		disconnect();
 		
-		// TODO �i���٭n�� receiver ��AP���@�U�_�F
+		// TODO notify ap
 	}
 	
 	public void heartbeatTimeout() {
 		mLogger.error("Can't receive any message from server.");
 		disconnect();
 		
-		// TODO �i���٭n�� receiver ��AP���@�U�_�F
+		// TODO notify ap
 	}
 	
 	private void disconnect() {
