@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>server</artifactId>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>name.qd.SimpleConnect</groupId>
