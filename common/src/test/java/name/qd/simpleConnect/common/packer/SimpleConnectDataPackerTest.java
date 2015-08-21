@@ -23,7 +23,11 @@ public class SimpleConnectDataPackerTest {
 		PackVo vo = new PackVo();
 		vo.setData("QQKK123".getBytes());
 		vo.setOP_CodeEnum(OP_CodeEnum.DATA);
-		assertTrue(Arrays.equals(SimpleConnectDataPacker.packingData(vo), SimpleConnectDataPacker.packingDataUseByteBuffer(vo)));
+		
+		byte[] bPack = SimpleConnectDataPacker.packingData(vo);
+		byte[] bPackBuf = SimpleConnectDataPacker.packingDataUseByteBuffer(vo);
+		
+		assertTrue(Arrays.equals(bPack, bPackBuf));
 	}
 	
 	@Test

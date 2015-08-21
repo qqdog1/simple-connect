@@ -38,7 +38,7 @@ public class SimpleConnectDataPackerBenchmark {
 				.measurementIterations(5)
 //				.threads(4)
 				.timeUnit(TimeUnit.MICROSECONDS)
-//				.mode(Mode.AverageTime)
+				.mode(Mode.AverageTime)
 //				.mode(Mode.SingleShotTime)
 				.forks(1)
 				.build();
