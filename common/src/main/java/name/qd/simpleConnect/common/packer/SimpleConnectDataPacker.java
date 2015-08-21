@@ -10,8 +10,6 @@ import name.qd.simpleConnect.common.enumeration.OP_CodeEnum;
 import name.qd.simpleConnect.common.packer.vo.PackVo;
 
 public class SimpleConnectDataPacker {
-	private static byte[] bLength = new byte[PackerConstant.LENGTH_LENGTH];
-	
 	public static PackVo unpackingData(InputStream inputStream) throws IOException {
 		PackVo vo = new PackVo();
 		readAndCheckBOU(inputStream);
@@ -46,6 +44,7 @@ public class SimpleConnectDataPacker {
 		int iTotalLength = PackerConstant.BOU_EOU_LENGTH + PackerConstant.LENGTH_LENGTH + PackerConstant.OP_LENGTH + PackerConstant.BOU_EOU_LENGTH;
 		iTotalLength += vo.getData().length;
 		ByteBuffer byteBuffer = ByteBuffer.allocate(iTotalLength);
+//		byteBuffer.clear();
 		byteBuffer.put(PackerConstant.BOU);
 		byteBuffer.put(PackerConstant.BOU);
 		byteBuffer.put((byte)((PackerConstant.OP_LENGTH + vo.getData().length) / PackerConstant.POSITIVE_BYTE_SIZE));
@@ -54,7 +53,6 @@ public class SimpleConnectDataPacker {
 		byteBuffer.put(vo.getData());
 		byteBuffer.put(PackerConstant.EOU);
 		byteBuffer.put(PackerConstant.EOU);
-		
 		return byteBuffer.array();
 	}
 	
@@ -141,6 +139,7 @@ public class SimpleConnectDataPacker {
 	
 	private static byte[] writeLength(byte[] bData, PackVo vo, int iOffset) {
 		int iLength = PackerConstant.OP_LENGTH + vo.getData().length;
+		byte[] bLength = new byte[PackerConstant.LENGTH_LENGTH];
 		bLength[0] = (byte)(iLength / PackerConstant.POSITIVE_BYTE_SIZE);
 		bLength[1] = (byte)(iLength % PackerConstant.POSITIVE_BYTE_SIZE);
 		System.arraycopy(bLength, 0, bData, iOffset, PackerConstant.LENGTH_LENGTH);
