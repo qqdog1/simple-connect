@@ -50,5 +50,6 @@ public class TestClient {
 		mLogger.info("Total Send Cost Time: " + lTime + " ns.");
 		mLogger.info("Send Success Count: " + iSuccessCount + ".");
 		mLogger.info("Send Failed Count: " + iFalseCount + ".");
+		System.out.println("");
 	}
 }
