@@ -5,4 +5,5 @@ notifications:
   
 branches:
   only:
+    - master
     - .*
