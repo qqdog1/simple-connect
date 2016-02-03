@@ -2,3 +2,8 @@ language: java
 
 notifications:
   slack: integrateenv:JSGldzO9SYtzzdggfncFKTXp
+  
+branches:
+only:
+	- master
+	- develop
