@@ -4,6 +4,6 @@ notifications:
   slack: integrateenv:JSGldzO9SYtzzdggfncFKTXp
   
 branches:
-only:
-	- master
-	- develop
+  only:
+    - master
+    - develop
