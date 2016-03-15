@@ -117,9 +117,12 @@ public class Client extends Thread {
 	}
 	
 	public void receiveConfirm() {
-		initSendingQManager();
-		
-		bConnectStatus = true;
+		if(!bConnectStatus) {
+			initSendingQManager();
+			bConnectStatus = true;
+		} else {
+			// TODO error
+		}
 	}
 	
 	private void initSendingQManager() {
