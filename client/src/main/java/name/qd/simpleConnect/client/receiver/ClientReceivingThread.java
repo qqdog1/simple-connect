@@ -2,7 +2,7 @@ package name.qd.simpleConnect.client.receiver;
 
 import org.apache.log4j.Logger;
 
-import name.qd.simpleConnect.client.Client;
+import name.qd.simpleConnect.client.ClientThread;
 import name.qd.simpleConnect.common.constant.LogConstant;
 import name.qd.simpleConnect.common.enumeration.OP_CodeEnum;
 import name.qd.simpleConnect.common.packer.vo.PackVo;
@@ -10,14 +10,14 @@ import name.qd.simpleConnect.common.receiver.ReceivingQManager;
 
 public class ClientReceivingThread extends Thread {
 	
-	private Client client;
+	private ClientThread clientThread;
 	private ReceivingQManager receivingQManager;
 	private boolean bRunFlag;
 	
 	private Logger mLogger = Logger.getLogger(LogConstant.CLIENT_LOG);
 	
-	public ClientReceivingThread(Client client, ReceivingQManager receivingQManager) {
-		this.client = client;
+	public ClientReceivingThread(ClientThread clientThread, ReceivingQManager receivingQManager) {
+		this.clientThread = clientThread;
 		this.receivingQManager = receivingQManager;
 		bRunFlag = true;
 		this.start();
@@ -30,7 +30,7 @@ public class ClientReceivingThread extends Thread {
 				
 				if(vo == null) {
 					if(bRunFlag) {
-						client.heartbeatTimeout();
+						clientThread.heartbeatTimeout();
 					}
 					continue;
 				}
@@ -40,15 +40,15 @@ public class ClientReceivingThread extends Thread {
 				
 				switch(op_CodeEnum) {
 				case CONFIRM:
-					client.receiveConfirm();
+					clientThread.receiveConfirm();
 					break;
 				case DATA:
-					client.receiveData(vo.getData());
+					clientThread.receiveData(vo.getData());
 					break;
 				case HEARTBEAT:
 					break;
 				case REJECT:
-					client.receiveReject(vo.getData());
+					clientThread.receiveReject(vo.getData());
 					break;
 				default:
 					break;
