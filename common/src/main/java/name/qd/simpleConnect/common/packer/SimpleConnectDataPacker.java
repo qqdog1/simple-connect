@@ -12,10 +12,10 @@ import name.qd.simpleConnect.common.packer.vo.PackVo;
 public class SimpleConnectDataPacker {
 	public static PackVo unpackingData(InputStream inputStream) throws IOException {
 		PackVo vo = new PackVo();
-		readAndCheckBOU(inputStream);
+		readAndCheckUnit(inputStream, PackerConstant.BOU);
 		int iLength = readLength(inputStream);
 		byte[] bData = readBytesByLength(inputStream, iLength);
-		if(readAndCheckEOU(inputStream)) {
+		if(readAndCheckUnit(inputStream, PackerConstant.EOU)) {
 			byte[] bOP_Code = Arrays.copyOfRange(bData, 0, PackerConstant.OP_LENGTH);
 			vo.setOP_CodeEnum(OP_CodeEnum.getOP_CodeEnum(bOP_Code));
 			vo.setData(Arrays.copyOfRange(bData, PackerConstant.OP_LENGTH, bData.length));
@@ -71,23 +71,11 @@ public class SimpleConnectDataPacker {
 		return packingData(vo);
 	}
 	
-	private static void readAndCheckBOU(InputStream inputStream) throws IOException {
+	private static boolean readAndCheckUnit(InputStream inputStream, byte bUnit) throws IOException {
 		int iReadLength = 0;
 		while(iReadLength != PackerConstant.BOU_EOU_LENGTH) {
 			byte[] b = readBytesByLength(inputStream, 1);
-			if(b != null && b[0] == PackerConstant.BOU) {
-				iReadLength++;
-			} else {
-				iReadLength = 0;
-			}
-		}
-	}
-	
-	private static boolean readAndCheckEOU(InputStream inputStream) throws IOException {
-		int iReadLength = 0;
-		while(iReadLength != PackerConstant.BOU_EOU_LENGTH) {
-			byte[] b = readBytesByLength(inputStream, 1);
-			if(b != null && b[0] == PackerConstant.EOU) {
+			if(b != null && b[0] == bUnit) {
 				iReadLength++;
 			} else {
 				return false;

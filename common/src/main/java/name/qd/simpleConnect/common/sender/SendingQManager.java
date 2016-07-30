@@ -48,7 +48,7 @@ public class SendingQManager extends Thread {
 		if(bSuccess) {
 			mLogger.debug("[" + sSenderName + "], Put Msg to Queue without Block. Data:[" + new String(bData) + "]");
 		} else {
-			mLogger.debug("[" + sSenderName + "], Sending Queue Not enough capacity. Data:[" + new String(bData) + "]");
+			mLogger.debug("[" + sSenderName + "], Not enough capacity in Sending Queue. Data:[" + new String(bData) + "]");
 		}
 		return bSuccess;
 	}
@@ -60,7 +60,7 @@ public class SendingQManager extends Thread {
 			if(bSuccess) {
 				mLogger.debug("[" + sSenderName + "], Put Msg to Queue with Block. Data:[" + new String(bData) + "]");
 			} else {
-				mLogger.debug("[" + sSenderName + "], Sending Queue Not enough capacity. Timeout:[" + lTimeout + "], Data:[" + new String(bData) + "]");
+				mLogger.debug("[" + sSenderName + "], Not enough capacity in Sending Queue. Timeout:[" + lTimeout + "], Data:[" + new String(bData) + "]");
 			}
 		} catch (InterruptedException e) {
 			mLogger.error(e);
