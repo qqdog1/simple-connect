@@ -14,11 +14,6 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>name.qd</groupId>
-				<artifactId>common</artifactId>
-				<version>1.0</version>
-			</dependency>
 			<!-- Logger -->
 			<dependency>
 				<groupId>log4j</groupId>
@@ -36,6 +31,7 @@
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-all</artifactId>
 				<version>1.10.19</version>
+				<scope>test</scope>
 			</dependency>
 			<!-- JMH -->
 			<dependency>
