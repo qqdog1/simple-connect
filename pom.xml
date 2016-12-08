@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>name.qd.SimpleConnect</groupId>
+	<groupId>name.qd</groupId>
 	<artifactId>SimpleConnect</artifactId>
 	<packaging>pom</packaging>
 	<version>1.0</version>
@@ -14,11 +14,6 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>name.qd.SimpleConnect</groupId>
-				<artifactId>common</artifactId>
-				<version>1.0</version>
-			</dependency>
 			<!-- Logger -->
 			<dependency>
 				<groupId>log4j</groupId>
@@ -36,6 +31,7 @@
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-all</artifactId>
 				<version>1.10.19</version>
+				<scope>test</scope>
 			</dependency>
 			<!-- JMH -->
 			<dependency>
