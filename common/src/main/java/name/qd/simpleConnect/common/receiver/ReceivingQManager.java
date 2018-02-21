@@ -7,11 +7,11 @@ import name.qd.simpleConnect.common.packer.vo.PackVo;
 
 public class ReceivingQManager {
 	private ArrayBlockingQueue<PackVo> queue;
-	private long lTimeOut;
+	private long timeOut;
 	
-	public ReceivingQManager(int iQueueSize, int iHeartbeatInterval, int iHeartbeatCount) {
-		queue = new ArrayBlockingQueue<PackVo>(iQueueSize);
-		lTimeOut = (long)iHeartbeatInterval * (long)iHeartbeatCount;
+	public ReceivingQManager(int queueSize, int heartbeatInterval, int heartbeatCount) {
+		queue = new ArrayBlockingQueue<PackVo>(queueSize);
+		timeOut = (long)heartbeatInterval * (long)heartbeatCount;
 	}
 	
 	public void add(PackVo vo) throws IllegalStateException {
@@ -19,6 +19,6 @@ public class ReceivingQManager {
 	}
 	
 	public PackVo poll() throws InterruptedException {
-		return queue.poll(lTimeOut, TimeUnit.MILLISECONDS);
+		return queue.poll(timeOut, TimeUnit.MILLISECONDS);
 	}
 }

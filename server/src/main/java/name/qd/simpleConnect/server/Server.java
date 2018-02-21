@@ -5,30 +5,30 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import name.qd.simpleConnect.common.constant.LogConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import name.qd.simpleConnect.common.enumeration.REJ_CodeEnum;
 import name.qd.simpleConnect.common.receiver.SimpleConnectReceiver;
 import name.qd.simpleConnect.server.clientSocket.ClientSocketThread;
 import name.qd.simpleConnect.server.clientSocket.ClientSocketThreadManager;
 import name.qd.simpleConnect.server.clientSocket.LoginKeyControl;
 
-import org.apache.log4j.Logger;
-
 public class Server extends Thread {
 	
-	private Logger mLogger;
+	private Logger log = LoggerFactory.getLogger(Server.class);
 	
 	private ServerConfigLoader configLoader;
 	
 	private ServerSocket serverSocket;
 	
-	private boolean bInitStatus = true;
+	private boolean initStatus = true;
 	
 	private SimpleConnectReceiver receiver;
-	private boolean bRunFlag = true;
+	private boolean runFlag = true;
 	
-	public Server(String sConfigPath, SimpleConnectReceiver receiver) {
-		initConfigAndLogger(sConfigPath);
+	public Server(String configPath, SimpleConnectReceiver receiver) {
+		initConfigAndLogger(configPath);
 		
 		initReceiver(receiver);
 		
@@ -39,19 +39,17 @@ public class Server extends Thread {
 	
 	public void startServer() {
 		this.start();
-		mLogger.info("Server started.");
+		log.info("Server started.");
 	}
 	
-	private void initConfigAndLogger(String sConfigPath) {
+	private void initConfigAndLogger(String configPath) {
 		try {
 			configLoader = ServerConfigLoader.getInstance();
-			configLoader.init(sConfigPath);
-			mLogger = Logger.getLogger(LogConstant.SERVER_LOG);
-			mLogger.info("Config loaded.");
+			configLoader.init(configPath);
+			log.info("Config loaded.");
 		} catch (Exception e) {
-			bInitStatus = false;
-			mLogger = Logger.getLogger(LogConstant.SERVER_LOG);
-			mLogger.error("Simple Connect Server init failed. Check the config.", e);
+			initStatus = false;
+			log.error("Simple Connect Server init failed. Check the config.", e);
 			return;
 		}
 	}
@@ -60,23 +58,23 @@ public class Server extends Thread {
 		if(receiver != null) {
 			this.receiver = receiver;
 		} else {
-			bInitStatus = false;
-			mLogger.error("ServerSocketReceiver can't be null.");
+			initStatus = false;
+			log.error("ServerSocketReceiver can't be null.");
 		}
 	}
 	
 	private void bindSocket() {
-		if(!bInitStatus) {
-			mLogger.error("Server init failed. Check the logs before this line.");
+		if(!initStatus) {
+			log.error("Server init failed. Check the logs before this line.");
 			return;
 		}
 		
 		try {
 			serverSocket = new ServerSocket();
 			serverSocket.bind(new InetSocketAddress(configLoader.getServerIp(), configLoader.getServerPort()));
-			mLogger.info("Server bind. Address:[" + configLoader.getServerIp() + ":" + configLoader.getServerPort() + "]");
+			log.info("Server bind. Address:[{}:{}]", configLoader.getServerIp(), configLoader.getServerPort());
 		} catch (IOException e) {
-			mLogger.error(e);
+			log.error("Bind socket failed.", e);
 		}
 	}
 	
@@ -85,40 +83,40 @@ public class Server extends Thread {
 	}
 	
 	public void run() {
-		while(bRunFlag) {
+		while(runFlag) {
 			try {
 				Socket socket = serverSocket.accept();
-				String sClientIp = socket.getInetAddress().getHostAddress();
+				String clientIp = socket.getInetAddress().getHostAddress();
 				
-				String sKey = LoginKeyControl.getInstance().getNewLoginKey(sClientIp);
-				ClientSocketThread clientSocketThread = new ClientSocketThread(socket, receiver, sKey, configLoader);
+				String key = LoginKeyControl.getInstance().getNewLoginKey(clientIp);
+				ClientSocketThread clientSocketThread = new ClientSocketThread(socket, receiver, key, configLoader);
 				
-				if(sKey == null) {
-					mLogger.warn("Client connected failed. Connections are full. Close Socket. IP:[" + sClientIp + "]");
+				if(key == null) {
+					log.warn("Client connected failed. Connections are full. Close Socket. IP:[{}]", clientIp);
 					clientSocketThread.sendReject(REJ_CodeEnum.SAME_IP_FULL.getByteArray());
 					clientSocketThread.disconnect();
 				} else {
-					mLogger.info("Client:[" + sKey + "] connected.");
-					ClientSocketThreadManager.getInstance().add(sKey, clientSocketThread);
+					log.info("Client:[{}] connected.", key);
+					ClientSocketThreadManager.getInstance().add(key, clientSocketThread);
 					clientSocketThread.sendConfirm();
 					clientSocketThread.startClientSocketThread();
 				}
 			} catch (IOException e) {
-				mLogger.error(e);
+				log.error("Server run failed.", e);
 			}
 		}
 	}
 	
-	public boolean send(String sClientName, byte[] bData) {
-		return ClientSocketThreadManager.getInstance().send(sClientName, bData);
+	public boolean send(String clientName, byte[] data) {
+		return ClientSocketThreadManager.getInstance().send(clientName, data);
 	}
 	
-	public int send(byte[] bData) {
-		return ClientSocketThreadManager.getInstance().send(bData);
+	public int send(byte[] data) {
+		return ClientSocketThreadManager.getInstance().send(data);
 	}
 	
 	public void stopServer() {
-		bRunFlag = false;
-		mLogger.info("Stop Server.");
+		runFlag = false;
+		log.info("Stop Server.");
 	}
 }

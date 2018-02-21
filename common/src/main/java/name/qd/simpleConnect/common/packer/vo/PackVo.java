@@ -4,7 +4,7 @@ import name.qd.simpleConnect.common.enumeration.OP_CodeEnum;
 
 public class PackVo {
 	private OP_CodeEnum op_CodeEnum;
-	private byte[] bData = new byte[]{0};
+	private byte[] data = new byte[]{0};
 	
 	public OP_CodeEnum getOP_CodeEnum() {
 		return op_CodeEnum;
@@ -13,13 +13,13 @@ public class PackVo {
 		this.op_CodeEnum = op_CodeEnum;
 	}
 	public byte[] getData() {
-		return bData;
+		return data;
 	}
-	public void setData(byte[] bData) {
-		this.bData = bData;
+	public void setData(byte[] data) {
+		this.data = data;
 	}
 	
 	public String toString() {
-		return "OP_CodeEnum:[" + op_CodeEnum + "], Data:[" + new String(bData) + "]";
+		return "OP_CodeEnum:[" + op_CodeEnum + "], Data:[" + new String(data) + "]";
 	}
 }

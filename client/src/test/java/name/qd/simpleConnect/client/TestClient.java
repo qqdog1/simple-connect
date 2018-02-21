@@ -1,14 +1,9 @@
 package name.qd.simpleConnect.client;
 
-import name.qd.simpleConnect.common.constant.LogConstant;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 public class TestClient {
 	
-	private static final int TOTAL_COUNT = 30000;
-	private Logger mLogger;
+	private static final int TOTAL_COUNT = 10;
 	
 	private byte[] bData = "abc".getBytes();
 	
@@ -20,10 +15,6 @@ public class TestClient {
 	}
 
 	private TestClient() {
-//		PropertyConfigurator.configure("./config/testLog4j.properties");
-//		mLogger = Logger.getLogger("client");
-		mLogger = Logger.getLogger(LogConstant.CLIENT_LOG);
-		
 		Client client = new Client("./config/ClientConfig.txt", new ClientReceiver(this), "TestClient1");
 		
 		client.connectToServer();
@@ -35,7 +26,6 @@ public class TestClient {
 		}
 		
 		//==============================================
-		mLogger.info("Total Count:[" + TOTAL_COUNT + "]");
 		long lTime = System.nanoTime();
 		
 		for(int i = 0 ; i < TOTAL_COUNT ; i++) {
@@ -47,9 +37,6 @@ public class TestClient {
 		}
 		
 		lTime = System.nanoTime() - lTime;
-		mLogger.info("Total Send Cost Time: " + lTime + " ns.");
-		mLogger.info("Send Success Count: " + iSuccessCount + ".");
-		mLogger.info("Send Failed Count: " + iFalseCount + ".");
-		System.out.println("");
+		System.out.println(lTime);
 	}
 }

@@ -9,19 +9,19 @@ public enum OP_CodeEnum {
 	REJECT("R".getBytes()),
 	;
 	
-	private byte[] bOP_Code;
+	private byte[] OP_Code;
 	
-	OP_CodeEnum(byte[] bOP_Code) {
-		this.bOP_Code= bOP_Code;
+	OP_CodeEnum(byte[] OP_Code) {
+		this.OP_Code= OP_Code;
 	}
 	
 	public byte[] getByteArray() {
-		return bOP_Code;
+		return OP_Code;
 	}
 	
-	public static OP_CodeEnum getOP_CodeEnum(byte[] bOP_Code) {
+	public static OP_CodeEnum getOP_CodeEnum(byte[] OP_Code) {
 		for(OP_CodeEnum op_CodeEnum : OP_CodeEnum.values()) {
-			if(Arrays.equals(bOP_Code, op_CodeEnum.getByteArray())) {
+			if(Arrays.equals(OP_Code, op_CodeEnum.getByteArray())) {
 				return op_CodeEnum;
 			}
 		}

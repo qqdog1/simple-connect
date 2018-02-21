@@ -14,6 +14,6 @@ public class ServerReceiver implements SimpleConnectReceiver {
 //		for(int i = 0 ; i < 10 ; i++) {
 			testServer.send(sSessionId, bData);
 //		}
-//		System.out.println("Send Over.");
+		System.out.println("echo.......");
 	}
 }

@@ -5,12 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.log4j.PropertyConfigurator;
-
 public class ClientConfigLoader {
 	private static ClientConfigLoader instance = new ClientConfigLoader();
-	
-	private static final String LOG4J_CONFIG_PATH = "Log4jConfigPath";
 	
 	private static final String SERVER_IP = "ServerIp";
 	private static final String SERVER_PORT = "ServerPort";
@@ -20,17 +16,17 @@ public class ClientConfigLoader {
 	private static final String SENDING_QUEUE_SIZE = "SendingQueue-Size";
 	private static final String RECEIVING_QUEUE_SIZE = "ReceivingQueue-Size";
 	
-	private String sConfigPath;
+	private String configPath;
 	
 	private Properties properties;
 	
-	private String sServerIp;
-	private int iServerPort;
-	private int iHeartbeatInterval;
-	private int iHeartbeatCount;
+	private String serverIp;
+	private int serverPort;
+	private int heartbeatInterval;
+	private int heartbeatCount;
 	
-	private int iSendingQueueSize;
-	private int iReceivingQueueSize;
+	private int sendingQueueSize;
+	private int receivingQueueSize;
 	
 	private ClientConfigLoader() {
 	}
@@ -39,12 +35,10 @@ public class ClientConfigLoader {
 		return instance;
 	}
 	
-	public void init(String sConfigPath) throws FileNotFoundException, NumberFormatException, IOException, Exception {
-		this.sConfigPath = sConfigPath;
+	public void init(String configPath) throws FileNotFoundException, NumberFormatException, IOException, Exception {
+		this.configPath = configPath;
 		
 		loadProperties();
-		
-		setLogger();
 		
 		readServerIpfromConfig();
 		
@@ -61,113 +55,108 @@ public class ClientConfigLoader {
 	
 	private void loadProperties() throws FileNotFoundException, IOException {
 		properties = new Properties();
-		FileInputStream fIn = new FileInputStream(sConfigPath);
+		FileInputStream fIn = new FileInputStream(configPath);
 		properties.load(fIn);
 		fIn.close();
 	}
 	
-	private void setLogger() {
-		String sLogConfigPath = properties.getProperty(LOG4J_CONFIG_PATH);
-		PropertyConfigurator.configure(sLogConfigPath);
-	}
-	
 	private void readServerIpfromConfig() throws Exception {
-		sServerIp = properties.getProperty(SERVER_IP);
-		if(sServerIp == null) {
+		serverIp = properties.getProperty(SERVER_IP);
+		if(serverIp == null) {
 			throw new Exception(getExceptionDesc(SERVER_IP));
 		}
 	}
 	
 	private void readServerPortfromConfig() throws Exception {
-		String sServerPort = properties.getProperty(SERVER_PORT);
-		if(sServerPort == null) {
+		String serverPortString = properties.getProperty(SERVER_PORT);
+		if(serverPortString == null) {
 			throw new Exception(getExceptionDesc(SERVER_PORT));
 		}
 		
 		try {
-			iServerPort = Integer.parseInt(sServerPort);
+			serverPort = Integer.parseInt(serverPortString);
 		} catch(NumberFormatException e) {
 			throw e;
 		}
 	}
 	
 	private void readHeartbeatIntervalfromConfig() throws Exception {
-		String sHeartbeatInterval = properties.getProperty(HEARTBEAT_INTERVAL);
-		if(sHeartbeatInterval == null) {
+		String heartbeatIntervalString = properties.getProperty(HEARTBEAT_INTERVAL);
+		if(heartbeatIntervalString == null) {
 			throw new Exception(getExceptionDesc(HEARTBEAT_INTERVAL));
 		}
 		
 		try {
-			iHeartbeatInterval = Integer.parseInt(sHeartbeatInterval);
+			heartbeatInterval = Integer.parseInt(heartbeatIntervalString);
 		} catch(NumberFormatException e) {
 			throw e;
 		}
 	}
 	
 	private void readHeartbeatCountfromConfig() throws Exception {
-		String sHeartbeatCount = properties.getProperty(HEARTBEAT_COUNT);
-		if(sHeartbeatCount == null) {
+		String heartbeatCountString = properties.getProperty(HEARTBEAT_COUNT);
+		if(heartbeatCountString == null) {
 			throw new Exception(getExceptionDesc(HEARTBEAT_COUNT));
 		}
 		
 		try {
-			iHeartbeatCount = Integer.parseInt(sHeartbeatCount);
+			heartbeatCount = Integer.parseInt(heartbeatCountString);
 		} catch(NumberFormatException e) {
 			throw e;
 		}
 	}
 	
 	private void readSendingQueueSizefromConfig() throws Exception {
-		String sSendingQueueSize = properties.getProperty(SENDING_QUEUE_SIZE);
-		if(sSendingQueueSize == null) {
+		String sendingQueueSizeString = properties.getProperty(SENDING_QUEUE_SIZE);
+		if(sendingQueueSizeString == null) {
 			throw new Exception(getExceptionDesc(SENDING_QUEUE_SIZE));
 		}
 		
 		try {
-			iSendingQueueSize = Integer.parseInt(sSendingQueueSize);
+			sendingQueueSize = Integer.parseInt(sendingQueueSizeString);
 		} catch(NumberFormatException e) {
 			throw e;
 		}
 	}
 	
 	private void readReceivingQueueSizefromConfig() throws Exception {
-		String sReceivingQueueSize = properties.getProperty(RECEIVING_QUEUE_SIZE);
-		if(sReceivingQueueSize == null) {
+		String receivingQueueSizeString = properties.getProperty(RECEIVING_QUEUE_SIZE);
+		if(receivingQueueSizeString == null) {
 			throw new Exception(getExceptionDesc(RECEIVING_QUEUE_SIZE));
 		}
 		
 		try {
-			iReceivingQueueSize = Integer.parseInt(sReceivingQueueSize);
+			receivingQueueSize = Integer.parseInt(receivingQueueSizeString);
 		} catch(NumberFormatException e) {
 			throw e;
 		}
 	}
 	
 	public String getServerIp() {
-		return sServerIp;
+		return serverIp;
 	}
 	
 	public int getServerPort() {
-		return iServerPort;
+		return serverPort;
 	}
 	
 	public int getHeartbeatInterval() {
-		return iHeartbeatInterval;
+		return heartbeatInterval;
 	}
 	
 	public int getHeartbeatCount() {
-		return iHeartbeatCount;
+		return heartbeatCount;
 	}
 	
 	public int getSendingQueueSize() {
-		return iSendingQueueSize;
+		return sendingQueueSize;
 	}
 	
 	public int getReceivingQueueSize() {
-		return iReceivingQueueSize;
+		return receivingQueueSize;
 	}
 	
 	private String getExceptionDesc(String sTag) {
-		return sTag + "must set in Config, check the config. ConfigPath:[" + sConfigPath + "]";
+		return sTag + "must set in Config, check the config. ConfigPath:[" + configPath + "]";
 	}
 }

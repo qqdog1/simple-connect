@@ -7,79 +7,79 @@ import java.util.concurrent.TimeUnit;
 
 import name.qd.simpleConnect.common.packer.SimpleConnectDataPacker;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SendingQManager extends Thread {
-	private Logger mLogger;
+	private Logger log = LoggerFactory.getLogger(SendingQManager.class);
 	
-	private String sSenderName;
+	private String senderName;
 	
 	private ArrayBlockingQueue<byte[]> queue;
-	private int iQueueSize;
+	private int queueSize;
 	
-	private int iHeartbeatInterval;
+	private int heartbeatInterval;
 	
 	private OutputStream outputStream;
 	
-	private boolean bRunFlag;
+	private boolean runFlag;
 	
-	public SendingQManager(Logger logger, int iQueueSize, int iHeartbeatInterval, OutputStream outputStream, String sSenderName) {
-		this.mLogger = logger;
-		this.iQueueSize = iQueueSize;
-		this.iHeartbeatInterval = iHeartbeatInterval;
+	public SendingQManager(int queueSize, int heartbeatInterval, OutputStream outputStream, String senderName) {
+		this.queueSize = queueSize;
+		this.heartbeatInterval = heartbeatInterval;
 		this.outputStream = outputStream;
-		this.sSenderName = sSenderName;
+		this.senderName = senderName;
 		
 		startSendingQueue();
 	}
 	
 	private void startSendingQueue() {
-		queue = new ArrayBlockingQueue<byte[]>(iQueueSize);
+		queue = new ArrayBlockingQueue<byte[]>(queueSize);
 		
-		mLogger.debug("[" + sSenderName + "], New Sending Queue size = [" + iQueueSize + "], start Sending Queue Thread.");
+		log.debug("[{}], New Sending Queue size = [{}], start Sending Queue Thread.", senderName, queueSize);
 		
-		bRunFlag = true;
+		runFlag = true;
 		
 		this.start();
 	}
 	
-	public boolean putQueue(byte[] bData) {
-		boolean bSuccess = queue.offer(SimpleConnectDataPacker.packingData(bData));
-		if(bSuccess) {
-			mLogger.debug("[" + sSenderName + "], Put Msg to Queue without Block. Data:[" + new String(bData) + "]");
+	public boolean putQueue(byte[] data) {
+		boolean success = queue.offer(SimpleConnectDataPacker.packingData(data));
+		if(success) {
+			log.debug("[{}], Put Msg to Queue without Block. Data:[{}]", senderName, new String(data));
 		} else {
-			mLogger.debug("[" + sSenderName + "], Not enough capacity in Sending Queue. Data:[" + new String(bData) + "]");
+			log.debug("[{}], Not enough capacity in Sending Queue. Data:[{}]", senderName, new String(data));
 		}
-		return bSuccess;
+		return success;
 	}
 	
-	public boolean putQueue(byte[] bData, long lTimeout) {
-		boolean bSuccess = false;
+	public boolean putQueue(byte[] data, long timeout) {
+		boolean success = false;
 		try {
-			bSuccess = queue.offer(SimpleConnectDataPacker.packingData(bData), lTimeout, TimeUnit.MILLISECONDS);
-			if(bSuccess) {
-				mLogger.debug("[" + sSenderName + "], Put Msg to Queue with Block. Data:[" + new String(bData) + "]");
+			success = queue.offer(SimpleConnectDataPacker.packingData(data), timeout, TimeUnit.MILLISECONDS);
+			if(success) {
+				log.debug("[{}], Put Msg to Queue with Block. Data:[{}]", senderName, new String(data));
 			} else {
-				mLogger.debug("[" + sSenderName + "], Not enough capacity in Sending Queue. Timeout:[" + lTimeout + "], Data:[" + new String(bData) + "]");
+				log.debug("[{}], Not enough capacity in Sending Queue. Timeout:[{}], Data:[{}]", senderName, timeout, new String(data));
 			}
 		} catch (InterruptedException e) {
-			mLogger.error(e);
+			log.error("put queue failed.", e);
 		}
-		return bSuccess;
+		return success;
 	}
 	
 	public void run() {
-		while(bRunFlag) {
+		while(runFlag) {
 			try {
-				byte[] bData = queue.poll(iHeartbeatInterval, TimeUnit.MILLISECONDS);
+				byte[] data = queue.poll(heartbeatInterval, TimeUnit.MILLISECONDS);
 				
-				if(bData != null) {
-					send(bData);
+				if(data != null) {
+					send(data);
 				} else {
 					sendHeartbeat();
 				}
 			} catch (InterruptedException e) {
-				mLogger.error(e);
+				log.error("Sending Queue run failed.", e);
 			}
 		}
 	}
@@ -88,18 +88,18 @@ public class SendingQManager extends Thread {
 		send(SimpleConnectDataPacker.packingHeartbeat());
 	}
 	
-	private void send(byte[] bData) {
+	private void send(byte[] data) {
 		try {
-			outputStream.write(bData);
-			mLogger.debug("[" + sSenderName + "], Send Message. Data:[" + new String(bData) + "]");
+			outputStream.write(data);
+			log.debug("[{}], Send Message. Data:[{}]", senderName, new String(data));
 		} catch (IOException e) {
-			if(bRunFlag) {
-				mLogger.error("[" + sSenderName + "], Send data failed. Data:[" + new String(bData) + "]", e);
+			if(runFlag) {
+				log.error("[{}], Send data failed. Data:[{}]", senderName, new String(data), e);
 			}
 		}
 	}
 	
 	public void closeSendingQThread() {
-		bRunFlag = false;
+		runFlag = false;
 	}
 }

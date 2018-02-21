@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import name.qd.simpleConnect.common.constant.LogConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import name.qd.simpleConnect.common.enumeration.OP_CodeEnum;
 import name.qd.simpleConnect.common.packer.SimpleConnectDataPacker;
 import name.qd.simpleConnect.common.packer.vo.PackVo;
@@ -15,11 +17,8 @@ import name.qd.simpleConnect.common.sender.SendingQManager;
 import name.qd.simpleConnect.server.ServerConfigLoader;
 import name.qd.simpleConnect.server.clientSocket.receiver.ReceiverThread;
 
-import org.apache.log4j.Logger;
-
 public class ClientSocketThread extends Thread {
-	
-	private Logger mLogger = Logger.getLogger(LogConstant.SERVER_LOG);
+	private Logger log = LoggerFactory.getLogger(ClientSocketThread.class);
 	
 	private Socket socket;
 	private OutputStream outputStream;
@@ -31,10 +30,10 @@ public class ClientSocketThread extends Thread {
 	private ReceivingQManager receivingQManager;
 	private ReceiverThread receiverThread;
 	
-	private boolean bRunFlag;
-	private String sKey;
+	private boolean runFlag;
+	private String key;
 	
-	public ClientSocketThread(Socket socket, SimpleConnectReceiver receiver, String sKey, ServerConfigLoader serverConfigLoader) {
+	public ClientSocketThread(Socket socket, SimpleConnectReceiver receiver, String key, ServerConfigLoader serverConfigLoader) {
 		try {
 			this.socket = socket;
 			outputStream = socket.getOutputStream();
@@ -42,24 +41,24 @@ public class ClientSocketThread extends Thread {
 			this.serverConfigLoader = serverConfigLoader;
 
 			this.receiver = receiver;
-			this.sKey = sKey;
+			this.key = key;
 			
 			initReceivingQManager();
 			initSendingQManager();
 			
-			bRunFlag = true;
+			runFlag = true;
 		} catch (IOException e) {
-			mLogger.error(e);
+			log.error("ClientSocketThread exception.", e);
 		}
 	}
 	
 	private void initReceivingQManager() {
 		receivingQManager = new ReceivingQManager(serverConfigLoader.getReceivingQueueSize(), serverConfigLoader.getHeartbeatInterval(), serverConfigLoader.getHeartbeatCount());
-		receiverThread = new ReceiverThread(this, receivingQManager, sKey);
+		receiverThread = new ReceiverThread(this, receivingQManager, key);
 	}
 	
 	private void initSendingQManager() {
-		sendingQManager = new SendingQManager(mLogger, ServerConfigLoader.getInstance().getSendingQueueSize(), ServerConfigLoader.getInstance().getHeartbeatInterval(), outputStream, sKey);
+		sendingQManager = new SendingQManager(ServerConfigLoader.getInstance().getSendingQueueSize(), ServerConfigLoader.getInstance().getHeartbeatInterval(), outputStream, key);
 	}
 	
 	public void startClientSocketThread() {
@@ -67,31 +66,31 @@ public class ClientSocketThread extends Thread {
 	}
 	
 	public void run() {
-		while(bRunFlag) {
+		while(runFlag) {
 			try {
 				PackVo vo = SimpleConnectDataPacker.unpackingData(inputStream);
 				receivingQManager.add(vo);
 			} catch (IllegalStateException e) {
-				mLogger.error("Receiving Queue Full.", e);
+				log.error("Receiving Queue Full.", e);
 			} catch (IOException e) {
-				mLogger.error(e);
-				bRunFlag = false;
+				log.error("unpacking data failed.", e);
+				runFlag = false;
 				disconnect();
-				mLogger.info("Close Connect. Key:[" + sKey + "]");
+				log.info("Close Connect. Key:[{}]", key);
 			}
 		}
 	}
 	
-	public boolean send(byte[] bData) {
-		return sendingQManager.putQueue(bData);
+	public boolean send(byte[] data) {
+		return sendingQManager.putQueue(data);
 	}
 	
-	public void receiveData(byte[] bData) {
-		receiver.onMessage(sKey, bData);
+	public void receiveData(byte[] data) {
+		receiver.onMessage(key, data);
 	}
 	
 	public void heartbeatTimeout() {
-		mLogger.error("Can't receive any message from Client. Key:[" + sKey + "]");
+		log.error("Can't receive any message from Client. Key:[{}]", key);
 		disconnect();
 	}
 	
@@ -102,10 +101,10 @@ public class ClientSocketThread extends Thread {
 		sendPackVo(vo);
 	}
 	
-	public void sendReject(byte[] bRej_Code) {
+	public void sendReject(byte[] rej_Code) {
 		PackVo vo = new PackVo();
 		vo.setOP_CodeEnum(OP_CodeEnum.REJECT);
-		vo.setData(bRej_Code);
+		vo.setData(rej_Code);
 		sendPackVo(vo);
 	}
 	
@@ -113,7 +112,7 @@ public class ClientSocketThread extends Thread {
 		try {
 			outputStream.write(SimpleConnectDataPacker.packingData(vo));
 		} catch (IOException e) {
-			mLogger.error(e);
+			log.error("Send pack vo failed.", e);
 			return false;
 		}
 		return true;
@@ -124,14 +123,14 @@ public class ClientSocketThread extends Thread {
 			sendingQManager.closeSendingQThread();
 			receiverThread.closeReceivingThread();
 			
-			if(sKey != null) {
-				ClientSocketThreadManager.getInstance().remove(sKey);
-				LoginKeyControl.getInstance().removeLoginKey(sKey);
+			if(key != null) {
+				ClientSocketThreadManager.getInstance().remove(key);
+				LoginKeyControl.getInstance().removeLoginKey(key);
 			}
 			
 			socket.close();
 		} catch (IOException e) {
-			mLogger.error(e);
+			log.error("Disconnect failed.", e);
 		}
 	}
 }

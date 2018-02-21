@@ -1,9 +1,9 @@
 package name.qd.simpleConnect.common.exception;
 
-@SuppressWarnings("serial")
 public class SimpleConnectException extends Exception {
+	private static final long serialVersionUID = 1L;
 
-	public SimpleConnectException(String sMsg) {
-		super(sMsg);
+	public SimpleConnectException(String msg) {
+		super(msg);
 	}
 }

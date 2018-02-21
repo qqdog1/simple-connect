@@ -6,8 +6,10 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import name.qd.simpleConnect.client.receiver.ClientReceivingThread;
-import name.qd.simpleConnect.common.constant.LogConstant;
 import name.qd.simpleConnect.common.enumeration.REJ_CodeEnum;
 import name.qd.simpleConnect.common.packer.SimpleConnectDataPacker;
 import name.qd.simpleConnect.common.packer.vo.PackVo;
@@ -15,59 +17,55 @@ import name.qd.simpleConnect.common.receiver.ReceivingQManager;
 import name.qd.simpleConnect.common.receiver.SimpleConnectReceiver;
 import name.qd.simpleConnect.common.sender.SendingQManager;
 
-import org.apache.log4j.Logger;
-
 public class ClientThread extends Thread {
 	private ClientConfigLoader configLoader;
-	private Logger mLogger;
+	private Logger log = LoggerFactory.getLogger(ClientThread.class);
 	
 	private Socket socket;
 	private InputStream inputStream;
 	private OutputStream outputStream;
 	
-	private boolean bInitStatus = true;
-	private boolean bConnectStatus = false;
+	private boolean initStatus = true;
+	private boolean connectStatus = false;
 	
-	private boolean bRunFlag = false;
-	private String sClientName;
+	private boolean runFlag = false;
+	private String clientName;
 	
 	private SimpleConnectReceiver receiver;
 	private SendingQManager sendingQManager;
 	private ReceivingQManager receivingQManager;
 	private ClientReceivingThread clientReceivingThread;
 	
-	public ClientThread(String sConfigPath, SimpleConnectReceiver receiver, String sClientName) {
-		this.sClientName = sClientName;
+	public ClientThread(String configPath, SimpleConnectReceiver receiver, String clientName) {
+		this.clientName = clientName;
 		this.receiver = receiver;
-		initConfigAndLogger(sConfigPath);
+		initConfigAndLogger(configPath);
 	}
 	
 	public void connectToServer() {
-		if(!bInitStatus) {
-			mLogger.error("Client init failed, not allow to connect to server. Check the logs before this line.");
+		if(!initStatus) {
+			log.error("Client init failed, not allow to connect to server. Check the logs before this line.");
 			return;
 		}
 		
 		if(connectServer()) {
 			initReceiver();
 			this.start();
-			mLogger.info("Connected to Server.");
+			log.info("Connected to Server.");
 			return;
 		} else {
-			mLogger.warn("Connect to Server Failed.");
+			log.warn("Connect to Server Failed.");
 		}
 	}
 	
-	private void initConfigAndLogger(String sConfigPath) {
+	private void initConfigAndLogger(String configPath) {
 		try {
 			configLoader = ClientConfigLoader.getInstance();
-			configLoader.init(sConfigPath);
-			mLogger = Logger.getLogger(LogConstant.CLIENT_LOG);
-			mLogger.info("Config loaded.");
+			configLoader.init(configPath);
+			log.info("Config loaded.");
 		} catch (Exception e) {
-			bInitStatus = false;
-			mLogger = Logger.getLogger(LogConstant.CLIENT_LOG);
-			mLogger.error("Simple Connect Client init failed. Check the config.", e);
+			initStatus = false;
+			log.error("Simple Connect Client init failed. Check the config.", e);
 			return;
 		}
 	}
@@ -77,8 +75,8 @@ public class ClientThread extends Thread {
 			receivingQManager = new ReceivingQManager(configLoader.getReceivingQueueSize(), configLoader.getHeartbeatInterval(), configLoader.getHeartbeatCount());
 			clientReceivingThread = new ClientReceivingThread(this, receivingQManager);
 		} else {
-			bInitStatus = false;
-			mLogger.error("ServerSocketReceiver can't be null.");
+			initStatus = false;
+			log.error("ServerSocketReceiver can't be null.");
 		}
 	}
 	
@@ -86,66 +84,66 @@ public class ClientThread extends Thread {
 		try {
 			socket = new Socket();
 			socket.connect(new InetSocketAddress(configLoader.getServerIp(), configLoader.getServerPort()));
-			mLogger.info("Connect to Server. IP:[" + configLoader.getServerIp() + "], Port:[" + configLoader.getServerPort() + "]");
+			log.info("Connect to Server. IP:[{}], Port:[{}]", configLoader.getServerIp(), configLoader.getServerPort());
 		
 			inputStream = socket.getInputStream();
 			outputStream = socket.getOutputStream();
 			
-			bRunFlag = true;
+			runFlag = true;
 		} catch (IOException e) {
-			mLogger.error(e);
+			log.error("Connect to server failed.", e);
 			return false;
 		}
 		return true;
 	}
 	
 	public void run() {
-		while(bRunFlag) {
+		while(runFlag) {
 			try {
 				PackVo vo = SimpleConnectDataPacker.unpackingData(inputStream);
 				receivingQManager.add(vo);
 			} catch (IllegalStateException e) {
-				mLogger.error("Receiving Queue Full.", e);
+				log.error("Receiving Queue Full.", e);
 			} catch (IOException e) {
 				// TODO notify ap
-				mLogger.error(e);
-				bRunFlag = false;
+				log.error("Client thread run failed.", e);
+				runFlag = false;
 				disconnect();
 			}
 		}
 	}
 	
 	public void receiveConfirm() {
-		if(!bConnectStatus) {
+		if(!connectStatus) {
 			initSendingQManager();
-			bConnectStatus = true;
+			connectStatus = true;
 		} else {
 			// TODO error
 		}
 	}
 	
 	private void initSendingQManager() {
-		sendingQManager = new SendingQManager(mLogger, configLoader.getSendingQueueSize(), configLoader.getHeartbeatInterval(), outputStream, sClientName);
+		sendingQManager = new SendingQManager(configLoader.getSendingQueueSize(), configLoader.getHeartbeatInterval(), outputStream, clientName);
 	}
 	
-	public boolean send(byte[] bData) {
-		return sendingQManager.putQueue(bData);
+	public boolean send(byte[] data) {
+		return sendingQManager.putQueue(data);
 	}
 	
-	public void receiveData(byte[] bData) {
-		receiver.onMessage(sClientName, bData);
+	public void receiveData(byte[] data) {
+		receiver.onMessage(clientName, data);
 	}
 	
-	public void receiveReject(byte[] bData) {
-		this.bRunFlag = false;
+	public void receiveReject(byte[] data) {
+		this.runFlag = false;
 		
-		REJ_CodeEnum rej_CodeEnum = REJ_CodeEnum.getREJ_CodeEnum(bData);
+		REJ_CodeEnum rej_CodeEnum = REJ_CodeEnum.getREJ_CodeEnum(data);
 		switch(rej_CodeEnum) {
 		case SAME_IP_FULL:
-			mLogger.error("Receive Reject from Server. Cause:[" + rej_CodeEnum + "]");
+			log.error("Receive Reject from Server. Cause:[{}]", rej_CodeEnum.name());
 			break;
 		default:
-			mLogger.error("Receiver Reject from Server with unknow reason.");
+			log.error("Receiver Reject from Server with unknow reason.");
 			break;
 		}
 		
@@ -155,7 +153,7 @@ public class ClientThread extends Thread {
 	}
 	
 	public void heartbeatTimeout() {
-		mLogger.error("Can't receive any message from server.");
+		log.error("Can't receive any message from server.");
 		disconnect();
 		
 		// TODO notify ap
@@ -168,16 +166,16 @@ public class ClientThread extends Thread {
 			}
 			clientReceivingThread.closeReceivingThread();
 			socket.close();
-			mLogger.info("Disconnect with server.");
+			log.info("Disconnect with server.");
 			
-			bRunFlag = false;
-			bConnectStatus = false;
+			runFlag = false;
+			connectStatus = false;
 		} catch (IOException e) {
-			mLogger.error(e);
+			log.error("Disconnect with server failed.", e);
 		}
 	}
 	
 	public boolean isConnect() {
-		return bConnectStatus;
+		return connectStatus;
 	}
 }

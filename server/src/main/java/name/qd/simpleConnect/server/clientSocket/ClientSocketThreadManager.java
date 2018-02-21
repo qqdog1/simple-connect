@@ -3,13 +3,11 @@ package name.qd.simpleConnect.server.clientSocket;
 import java.util.Hashtable;
 import java.util.Map;
 
-import name.qd.simpleConnect.common.constant.LogConstant;
-
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClientSocketThreadManager {
-	
-	private Logger mLogger = Logger.getLogger(LogConstant.SERVER_LOG);
+	private Logger log = LoggerFactory.getLogger(ClientSocketThreadManager.class);
 	
 	private Map<String, ClientSocketThread> map = new Hashtable<String, ClientSocketThread>();
 
@@ -22,38 +20,38 @@ public class ClientSocketThreadManager {
 	private ClientSocketThreadManager() {
 	}
 	
-	public void add(String sKey, ClientSocketThread clientSocketThread) {
-		map.put(sKey, clientSocketThread);
-		mLogger.debug("Add new ClientSocketThread, Key:[" + sKey + "]");
+	public void add(String key, ClientSocketThread clientSocketThread) {
+		map.put(key, clientSocketThread);
+		log.debug("Add new ClientSocketThread, Key:[{}]", key);
 	}
 	
-	public void remove(String sKey) {
-		if(map.containsKey(sKey)) {
-			map.remove(sKey);
-			mLogger.debug("Remove ClientSocketThread, Key:[" + sKey + "]");
+	public void remove(String key) {
+		if(map.containsKey(key)) {
+			map.remove(key);
+			log.debug("Remove ClientSocketThread, Key:[{}]", key);
 		}
 	}
 	
-	public boolean send(String sKey, byte[] bData) {
-		if(containsKey(sKey)) {
-			return map.get(sKey).send(bData);
+	public boolean send(String key, byte[] data) {
+		if(containsKey(key)) {
+			return map.get(key).send(data);
 		}
 		return false;
 	}
 	
-	public int send(byte[] bData) {
-		int iCount = 0;
+	public int send(byte[] data) {
+		int count = 0;
 		synchronized(map) {
 			for(ClientSocketThread clientSocketThread : map.values()) {
-				if(clientSocketThread.send(bData)) {
-					iCount++;
+				if(clientSocketThread.send(data)) {
+					count++;
 				}
 			}
 		}
-		return iCount;
+		return count;
 	}
 	
-	private boolean containsKey(String sKey) {
-		return map.containsKey(sKey);
+	private boolean containsKey(String key) {
+		return map.containsKey(key);
 	}
 }

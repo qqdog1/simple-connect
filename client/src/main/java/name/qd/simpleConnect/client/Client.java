@@ -6,16 +6,16 @@ public class Client {
 	
 	private ClientThread clientThread;
 	
-	public Client(String sConfigPath, SimpleConnectReceiver receiver, String sClientName) {
-		clientThread = new ClientThread(sConfigPath, receiver, sClientName);
+	public Client(String configPath, SimpleConnectReceiver receiver, String clientName) {
+		clientThread = new ClientThread(configPath, receiver, clientName);
 	}
 	
 	public void connectToServer() {
 		clientThread.connectToServer();
 	}
 	
-	public boolean send(byte[] bData) {
-		return clientThread.send(bData);
+	public boolean send(byte[] data) {
+		return clientThread.send(data);
 	}
 	
 	public boolean isConnect() {
