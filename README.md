@@ -4,7 +4,7 @@ Maven Repo
 
     <repositories>
         <repository>
-            <id>SimpleConnect-mvn-repo</id>
+            <id>SimpleConnect-mvn-repo</id>
             <url>https://raw.github.com/qqdog1/SimpleConnect/mvn-repo/</url>
             <snapshots>
                 <enabled>true</enabled>
