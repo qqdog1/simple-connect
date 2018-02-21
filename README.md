@@ -13,3 +13,30 @@ Maven Repo
         </repository>
     </repositories>
 
+Dependency
+
+Server
+
+    <dependency>
+    <groupId>name.qd.simpleConnect</groupId>
+        <artifactId>server</artifactId>
+        <version>1.0</version>
+    </dependency>
+    <dependency>
+        <groupId>name.qd.simpleConnect</groupId>
+        <artifactId>common</artifactId>
+        <version>1.0</version>
+    </dependency>
+    
+Client
+
+    <dependency>
+        <groupId>name.qd.simpleConnect</groupId>
+        <artifactId>client</artifactId>
+        <version>1.0</version>
+    </dependency>
+    <dependency>
+        <groupId>name.qd.simpleConnect</groupId>
+        <artifactId>common</artifactId>
+        <version>1.0</version>
+    </dependency>
