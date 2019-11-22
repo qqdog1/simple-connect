@@ -2,18 +2,18 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>name.qd.simpleConnect</groupId>
-		<artifactId>simpleConnect</artifactId>
-		<version>1.0</version>
+		<groupId>name.qd</groupId>
+		<artifactId>simple-connect</artifactId>
+		<version>1.0.0</version>
 	</parent>
 
 	<artifactId>server</artifactId>
 
 	<dependencies>
 		<dependency>
-			<groupId>name.qd.simpleConnect</groupId>
+			<groupId>name.qd.simple-connect</groupId>
 			<artifactId>common</artifactId>
-			<version>1.0</version>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 </project>
