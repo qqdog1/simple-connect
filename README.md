@@ -1,3 +1,5 @@
+![](https://github.com/qqdog1/SimpleConnect/workflows/Simple%20Connect%20build/badge.svg)
+
 # SimpleConnect
 
 Maven Repo
