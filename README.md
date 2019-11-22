@@ -1,4 +1,4 @@
-![](https://github.com/qqdog1/SimpleConnect/workflows/Simple%20Connect%20build/badge.svg)
+![](https://github.com/qqdog1/simpleConnect/workflows/Simple%20Connect%20build/badge.svg)
 
 # SimpleConnect
 
