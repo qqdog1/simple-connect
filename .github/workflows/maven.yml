@@ -13,6 +13,6 @@ jobs:
     - name: Build common
       run: mvn -B package --file ./common/pom.xml
     - name: Build server
-      run: mvn -B package --file ./server/pom.xml
+      run: mvn -B package --file ./server/pom.xml ./common/target/lib/common-1.0.0.jar
     - name: Build client
-      run: mvn -B package --file ./client/pom.xml
+      run: mvn -B package --file ./client/pom.xml ./common/target/lib/common-1.0.0.jar
