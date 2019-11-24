@@ -10,5 +10,9 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+    - name: Build common
+      run: mvn -B package --file ./common/pom.xml
+    - name: Build server
+      run: mvn -B package --file ./server/pom.xml
+    - name: Build client
+      run: mvn -B package --file ./client/pom.xml
