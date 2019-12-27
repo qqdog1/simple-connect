@@ -11,5 +11,5 @@ jobs:
       with:
         java-version: 1.8
     - name: Build maven
-      run: mvn -B package --file ./common/pom.xml
+      run: mvn install
     
