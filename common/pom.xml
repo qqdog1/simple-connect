@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>name.qd.simple-connect</groupId>
 		<artifactId>simple-connect</artifactId>
-		<version>1.0.2</version>
+		<version>1.0.3</version>
 	</parent>
 	
 	<artifactId>common</artifactId>
@@ -37,13 +37,13 @@
 		</dependency>
 	</dependencies>
 	
-	<scm><url>https://maven.pkg.github.com/qqdog1/simple-connect/common</url></scm>
+	<scm><url>https://maven.pkg.github.com/qqdog1/simple-connect</url></scm>
 	
 	<distributionManagement>
 	    <repository>
 			<id>github</id>
 			<name>GitHub OWNER Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/qqdog1/simple-connect/common</url>
+			<url>https://maven.pkg.github.com/qqdog1/simple-connect</url>
 	   	</repository>
 	</distributionManagement>
 </project>
