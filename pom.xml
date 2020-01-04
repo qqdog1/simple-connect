@@ -54,4 +54,14 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	
+	<scm><url>https://maven.pkg.github.com/qqdog1/simple-connect</url></scm>
+	
+	<distributionManagement>
+	    <repository>
+			<id>github</id>
+			<name>GitHub OWNER Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/qqdog1/simple-connect</url>
+	   	</repository>
+	</distributionManagement>
 </project>
