@@ -55,5 +55,5 @@ Client
 token相關設定請參考Github說明文件[Configuring Apache Maven for use with GitHub Packages](https://help.github.com/en/github/managing-packages-with-github-packages/configuring-apache-maven-for-use-with-github-packages#authenticating-to-github-packages)
 
 # 使用方式
-參考WIKI
+參考WIKI頁  
 https://github.com/qqdog1/simple-connect/wiki/%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F
